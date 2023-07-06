@@ -1,0 +1,2518 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "bastionHosts_bst_hub_name": {
+      "type": "String"
+    },
+    "extensions_enablevmaccess_expiration": {
+      "type": "SecureString"
+    },
+    "extensions_enablevmaccess_expiration_1": {
+      "type": "SecureString"
+    },
+    "extensions_enablevmaccess_password": {
+      "type": "SecureString"
+    },
+    "extensions_enablevmaccess_password_1": {
+      "type": "SecureString"
+    },
+    "extensions_enablevmaccess_remove_user": {
+      "type": "SecureString"
+    },
+    "extensions_enablevmaccess_remove_user_1": {
+      "type": "SecureString"
+    },
+    "extensions_enablevmaccess_reset_ssh": {
+      "type": "SecureString"
+    },
+    "extensions_enablevmaccess_reset_ssh_1": {
+      "type": "SecureString"
+    },
+    "extensions_enablevmaccess_ssh_key": {
+      "type": "SecureString"
+    },
+    "extensions_enablevmaccess_ssh_key_1": {
+      "type": "SecureString"
+    },
+    "extensions_enablevmaccess_username": {
+      "type": "SecureString"
+    },
+    "extensions_enablevmaccess_username_1": {
+      "type": "SecureString"
+    },
+    "networkInterfaces_client_vm_spoke_northeu33_z1_name": {
+      "type": "String"
+    },
+    "networkInterfaces_client_vm_westeu116_z1_name": {
+      "type": "String"
+    },
+    "networkInterfaces_pe_sql_nic_name": {
+      "type": "String"
+    },
+    "networkSecurityGroups_client_vm_spoke_northeu_nsg_name": {
+      "type": "String"
+    },
+    "networkSecurityGroups_client_vm_westeu_nsg_name": {
+      "type": "String"
+    },
+    "networkSecurityGroups_vnet_hub_001_AzureBastionSubnet_nsg_westeurope_name": {
+      "type": "String"
+    },
+    "networkSecurityGroups_vnet_hub_001_snet_hub_nsg_westeurope_name": {
+      "type": "String"
+    },
+    "networkSecurityGroups_vnet_spoke_northeu_001_snet_vm_nsg_northeurope_name": {
+      "type": "String"
+    },
+    "networkSecurityGroups_vnet_spoke_westeu_001_snet_vm_nsg_westeurope_name": {
+      "type": "String"
+    },
+    "privateDnsZones_privatelink_database_windows_net_name": {
+      "type": "String"
+    },
+    "privateEndpoints_pe_sql_name": {
+      "type": "String"
+    },
+    "publicIPAddresses_vnet_hub_001_ip_name": {
+      "type": "String"
+    },
+    "servers_azsqltk_name": {
+      "type": "String"
+    },
+    "virtualMachines_client_vm_spoke_northeu_name": {
+      "type": "String"
+    },
+    "virtualMachines_client_vm_westeu_name": {
+      "type": "String"
+    },
+    "virtualNetworks_vnet_hub_001_name": {
+      "type": "String"
+    },
+    "virtualNetworks_vnet_spoke_northeu_001_name": {
+      "type": "String"
+    },
+    "virtualNetworks_vnet_spoke_westeu_001_name": {
+      "type": "String"
+    },
+    "vulnerabilityAssessments_Default_storageContainerPath": {
+      "type": "SecureString"
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-09-01",
+      "location": "global",
+      "name": "[parameters('privateDnsZones_privatelink_database_windows_net_name')]",
+      "properties": {
+        "maxNumberOfRecordSets": 25000,
+        "maxNumberOfVirtualNetworkLinks": 1000,
+        "maxNumberOfVirtualNetworkLinksWithRegistration": 100,
+        "numberOfRecordSets": 2,
+        "numberOfVirtualNetworkLinks": 2,
+        "numberOfVirtualNetworkLinksWithRegistration": 2,
+        "provisioningState": "Succeeded"
+      },
+      "type": "Microsoft.Network/privateDnsZones"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "location": "westeurope",
+      "name": "[parameters('publicIPAddresses_vnet_hub_001_ip_name')]",
+      "properties": {
+        "idleTimeoutInMinutes": 4,
+        "ipAddress": "20.16.56.178",
+        "ipTags": [],
+        "publicIPAddressVersion": "IPv4",
+        "publicIPAllocationMethod": "Static"
+      },
+      "sku": {
+        "name": "Standard",
+        "tier": "Regional"
+      },
+      "type": "Microsoft.Network/publicIPAddresses"
+    },
+    {
+      "apiVersion": "2022-08-01-preview",
+      "kind": "v12.0",
+      "location": "westeurope",
+      "name": "[parameters('servers_azsqltk_name')]",
+      "properties": {
+        "administratorLogin": "sqluser",
+        "administrators": {
+          "administratorType": "ActiveDirectory",
+          "azureADOnlyAuthentication": false,
+          "login": "timo.knapp_microsoft.com#EXT#@fdpo.onmicrosoft.com",
+          "principalType": "User",
+          "sid": "91bf285c-b3de-4482-873d-a57edafb15e9",
+          "tenantId": "16b3c013-d300-468d-ac64-7eda0820b6d3"
+        },
+        "minimalTlsVersion": "1.2",
+        "publicNetworkAccess": "Disabled",
+        "restrictOutboundNetworkAccess": "Disabled",
+        "version": "12.0"
+      },
+      "type": "Microsoft.Sql/servers"
+    },
+    {
+      "apiVersion": "2023-03-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_client_vm_spoke_northeu33_z1_name'))]"
+      ],
+      "location": "northeurope",
+      "name": "[parameters('virtualMachines_client_vm_spoke_northeu_name')]",
+      "properties": {
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": true
+          }
+        },
+        "hardwareProfile": {
+          "vmSize": "Standard_B1ls"
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_client_vm_spoke_northeu33_z1_name'))]",
+              "properties": {
+                "deleteOption": "Delete"
+              }
+            }
+          ]
+        },
+        "osProfile": {
+          "adminUsername": "azureuser",
+          "allowExtensionOperations": true,
+          "computerName": "[parameters('virtualMachines_client_vm_spoke_northeu_name')]",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": false,
+            "enableVMAgentPlatformUpdates": false,
+            "patchSettings": {
+              "assessmentMode": "ImageDefault",
+              "patchMode": "ImageDefault"
+            },
+            "provisionVMAgent": true
+          },
+          "requireGuestProvisionSignal": true,
+          "secrets": []
+        },
+        "storageProfile": {
+          "dataDisks": [],
+          "diskControllerType": "SCSI",
+          "imageReference": {
+            "offer": "0001-com-ubuntu-server-focal",
+            "publisher": "canonical",
+            "sku": "20_04-lts-gen2",
+            "version": "latest"
+          },
+          "osDisk": {
+            "caching": "ReadWrite",
+            "createOption": "FromImage",
+            "deleteOption": "Delete",
+            "managedDisk": {
+              "id": "[resourceId('Microsoft.Compute/disks', concat(parameters('virtualMachines_client_vm_spoke_northeu_name'), '_OsDisk_1_1b672174a0694cae9b4d33d036f05ba5'))]"
+            },
+            "name": "[concat(parameters('virtualMachines_client_vm_spoke_northeu_name'), '_OsDisk_1_1b672174a0694cae9b4d33d036f05ba5')]",
+            "osType": "Linux"
+          }
+        }
+      },
+      "type": "Microsoft.Compute/virtualMachines",
+      "zones": [
+        "1"
+      ]
+    },
+    {
+      "apiVersion": "2023-03-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_client_vm_westeu116_z1_name'))]"
+      ],
+      "location": "westeurope",
+      "name": "[parameters('virtualMachines_client_vm_westeu_name')]",
+      "properties": {
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": true
+          }
+        },
+        "hardwareProfile": {
+          "vmSize": "Standard_B1ls"
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_client_vm_westeu116_z1_name'))]",
+              "properties": {
+                "deleteOption": "Delete"
+              }
+            }
+          ]
+        },
+        "osProfile": {
+          "adminUsername": "azureuser",
+          "allowExtensionOperations": true,
+          "computerName": "[parameters('virtualMachines_client_vm_westeu_name')]",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": false,
+            "enableVMAgentPlatformUpdates": false,
+            "patchSettings": {
+              "assessmentMode": "ImageDefault",
+              "patchMode": "ImageDefault"
+            },
+            "provisionVMAgent": true
+          },
+          "requireGuestProvisionSignal": true,
+          "secrets": []
+        },
+        "storageProfile": {
+          "dataDisks": [],
+          "diskControllerType": "SCSI",
+          "imageReference": {
+            "offer": "0001-com-ubuntu-server-focal",
+            "publisher": "canonical",
+            "sku": "20_04-lts-gen2",
+            "version": "latest"
+          },
+          "osDisk": {
+            "caching": "ReadWrite",
+            "createOption": "FromImage",
+            "deleteOption": "Delete",
+            "managedDisk": {
+              "id": "[resourceId('Microsoft.Compute/disks', concat(parameters('virtualMachines_client_vm_westeu_name'), '_OsDisk_1_4c85127ac624453f997cb5eff17b6450'))]"
+            },
+            "name": "[concat(parameters('virtualMachines_client_vm_westeu_name'), '_OsDisk_1_4c85127ac624453f997cb5eff17b6450')]",
+            "osType": "Linux"
+          }
+        }
+      },
+      "type": "Microsoft.Compute/virtualMachines",
+      "zones": [
+        "1"
+      ]
+    },
+    {
+      "apiVersion": "2023-03-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachines_client_vm_spoke_northeu_name'))]"
+      ],
+      "location": "northeurope",
+      "name": "[concat(parameters('virtualMachines_client_vm_spoke_northeu_name'), '/enablevmaccess')]",
+      "properties": {
+        "autoUpgradeMinorVersion": true,
+        "protectedSettings": {
+          "expiration": "[parameters('extensions_enablevmaccess_expiration')]",
+          "password": "[parameters('extensions_enablevmaccess_password')]",
+          "remove_user": "[parameters('extensions_enablevmaccess_remove_user')]",
+          "reset_ssh": "[parameters('extensions_enablevmaccess_reset_ssh')]",
+          "ssh_key": "[parameters('extensions_enablevmaccess_ssh_key')]",
+          "username": "[parameters('extensions_enablevmaccess_username')]"
+        },
+        "publisher": "Microsoft.OSTCExtensions",
+        "settings": {},
+        "type": "VMAccessForLinux",
+        "typeHandlerVersion": "1.4"
+      },
+      "type": "Microsoft.Compute/virtualMachines/extensions"
+    },
+    {
+      "apiVersion": "2023-03-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachines_client_vm_westeu_name'))]"
+      ],
+      "location": "westeurope",
+      "name": "[concat(parameters('virtualMachines_client_vm_westeu_name'), '/enablevmaccess')]",
+      "properties": {
+        "autoUpgradeMinorVersion": true,
+        "protectedSettings": {
+          "expiration": "[parameters('extensions_enablevmaccess_expiration_1')]",
+          "password": "[parameters('extensions_enablevmaccess_password_1')]",
+          "remove_user": "[parameters('extensions_enablevmaccess_remove_user_1')]",
+          "reset_ssh": "[parameters('extensions_enablevmaccess_reset_ssh_1')]",
+          "ssh_key": "[parameters('extensions_enablevmaccess_ssh_key_1')]",
+          "username": "[parameters('extensions_enablevmaccess_username_1')]"
+        },
+        "publisher": "Microsoft.OSTCExtensions",
+        "settings": {},
+        "type": "VMAccessForLinux",
+        "typeHandlerVersion": "1.4"
+      },
+      "type": "Microsoft.Compute/virtualMachines/extensions"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_hub_001_name'), 'snet-hub')]"
+      ],
+      "kind": "Regular",
+      "location": "westeurope",
+      "name": "[parameters('networkInterfaces_pe_sql_nic_name')]",
+      "properties": {
+        "disableTcpStateTracking": false,
+        "dnsSettings": {
+          "dnsServers": []
+        },
+        "enableAcceleratedNetworking": false,
+        "enableIPForwarding": false,
+        "ipConfigurations": [
+          {
+            "etag": "W/\"e6bdb5f6-920c-49d5-9af7-312797cda64e\"",
+            "id": "[concat(resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_pe_sql_nic_name')), '/ipConfigurations/privateEndpointIpConfig.fa803a40-8fbd-4673-9f43-b84aea118ddd')]",
+            "name": "privateEndpointIpConfig.fa803a40-8fbd-4673-9f43-b84aea118ddd",
+            "properties": {
+              "primary": true,
+              "privateIPAddress": "10.5.0.5",
+              "privateIPAddressVersion": "IPv4",
+              "privateIPAllocationMethod": "Static",
+              "privateLinkConnectionProperties": {
+                "fqdns": [
+                  "azsqltk.database.windows.net"
+                ],
+                "groupId": "sqlServer",
+                "requiredMemberName": "sqlServer"
+              },
+              "provisioningState": "Succeeded",
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_hub_001_name'), 'snet-hub')]"
+              }
+            },
+            "type": "Microsoft.Network/networkInterfaces/ipConfigurations"
+          }
+        ],
+        "nicType": "Standard"
+      },
+      "type": "Microsoft.Network/networkInterfaces"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_client_vm_spoke_northeu_nsg_name'), 'AllowTagSSHInbound')]"
+      ],
+      "location": "northeurope",
+      "name": "[parameters('networkSecurityGroups_client_vm_spoke_northeu_nsg_name')]",
+      "properties": {
+        "securityRules": [
+          {
+            "id": "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_client_vm_spoke_northeu_nsg_name'), 'AllowTagSSHInbound')]",
+            "name": "AllowTagSSHInbound",
+            "properties": {
+              "access": "Allow",
+              "destinationAddressPrefix": "*",
+              "destinationAddressPrefixes": [],
+              "destinationPortRange": "22",
+              "destinationPortRanges": [],
+              "direction": "Inbound",
+              "priority": 100,
+              "protocol": "TCP",
+              "sourceAddressPrefix": "VirtualNetwork",
+              "sourceAddressPrefixes": [],
+              "sourcePortRange": "*",
+              "sourcePortRanges": []
+            },
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+          }
+        ]
+      },
+      "type": "Microsoft.Network/networkSecurityGroups"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_client_vm_westeu_nsg_name'), 'AllowTagSSHInbound')]"
+      ],
+      "location": "westeurope",
+      "name": "[parameters('networkSecurityGroups_client_vm_westeu_nsg_name')]",
+      "properties": {
+        "securityRules": [
+          {
+            "id": "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_client_vm_westeu_nsg_name'), 'AllowTagSSHInbound')]",
+            "name": "AllowTagSSHInbound",
+            "properties": {
+              "access": "Allow",
+              "destinationAddressPrefix": "*",
+              "destinationAddressPrefixes": [],
+              "destinationPortRange": "22",
+              "destinationPortRanges": [],
+              "direction": "Inbound",
+              "priority": 100,
+              "protocol": "TCP",
+              "sourceAddressPrefix": "VirtualNetwork",
+              "sourceAddressPrefixes": [],
+              "sourcePortRange": "*",
+              "sourcePortRanges": []
+            },
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+          }
+        ]
+      },
+      "type": "Microsoft.Network/networkSecurityGroups"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_vnet_hub_001_AzureBastionSubnet_nsg_westeurope_name'))]"
+      ],
+      "name": "[concat(parameters('networkSecurityGroups_vnet_hub_001_AzureBastionSubnet_nsg_westeurope_name'), '/AllowAzureCloudOutbound')]",
+      "properties": {
+        "access": "Allow",
+        "destinationAddressPrefix": "AzureCloud",
+        "destinationAddressPrefixes": [],
+        "destinationPortRange": "443",
+        "destinationPortRanges": [],
+        "direction": "Outbound",
+        "priority": 110,
+        "protocol": "TCP",
+        "sourceAddressPrefix": "*",
+        "sourceAddressPrefixes": [],
+        "sourcePortRange": "*",
+        "sourcePortRanges": []
+      },
+      "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_vnet_hub_001_AzureBastionSubnet_nsg_westeurope_name'))]"
+      ],
+      "name": "[concat(parameters('networkSecurityGroups_vnet_hub_001_AzureBastionSubnet_nsg_westeurope_name'), '/AllowCorpnet')]",
+      "properties": {
+        "access": "Allow",
+        "description": "CSS Governance Security Rule.  Allow Corpnet inbound.  https://aka.ms/casg",
+        "destinationAddressPrefix": "*",
+        "destinationAddressPrefixes": [],
+        "destinationPortRange": "*",
+        "destinationPortRanges": [],
+        "direction": "Inbound",
+        "priority": 2700,
+        "protocol": "*",
+        "sourceAddressPrefix": "CorpNetPublic",
+        "sourceAddressPrefixes": [],
+        "sourcePortRange": "*",
+        "sourcePortRanges": []
+      },
+      "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_vnet_hub_001_snet_hub_nsg_westeurope_name'))]"
+      ],
+      "name": "[concat(parameters('networkSecurityGroups_vnet_hub_001_snet_hub_nsg_westeurope_name'), '/AllowCorpnet')]",
+      "properties": {
+        "access": "Allow",
+        "description": "CSS Governance Security Rule.  Allow Corpnet inbound.  https://aka.ms/casg",
+        "destinationAddressPrefix": "*",
+        "destinationAddressPrefixes": [],
+        "destinationPortRange": "*",
+        "destinationPortRanges": [],
+        "direction": "Inbound",
+        "priority": 2700,
+        "protocol": "*",
+        "sourceAddressPrefix": "CorpNetPublic",
+        "sourceAddressPrefixes": [],
+        "sourcePortRange": "*",
+        "sourcePortRanges": []
+      },
+      "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_vnet_spoke_northeu_001_snet_vm_nsg_northeurope_name'))]"
+      ],
+      "name": "[concat(parameters('networkSecurityGroups_vnet_spoke_northeu_001_snet_vm_nsg_northeurope_name'), '/AllowCorpnet')]",
+      "properties": {
+        "access": "Allow",
+        "description": "CSS Governance Security Rule.  Allow Corpnet inbound.  https://aka.ms/casg",
+        "destinationAddressPrefix": "*",
+        "destinationAddressPrefixes": [],
+        "destinationPortRange": "*",
+        "destinationPortRanges": [],
+        "direction": "Inbound",
+        "priority": 2700,
+        "protocol": "*",
+        "sourceAddressPrefix": "CorpNetPublic",
+        "sourceAddressPrefixes": [],
+        "sourcePortRange": "*",
+        "sourcePortRanges": []
+      },
+      "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_vnet_spoke_westeu_001_snet_vm_nsg_westeurope_name'))]"
+      ],
+      "name": "[concat(parameters('networkSecurityGroups_vnet_spoke_westeu_001_snet_vm_nsg_westeurope_name'), '/AllowCorpnet')]",
+      "properties": {
+        "access": "Allow",
+        "description": "CSS Governance Security Rule.  Allow Corpnet inbound.  https://aka.ms/casg",
+        "destinationAddressPrefix": "*",
+        "destinationAddressPrefixes": [],
+        "destinationPortRange": "*",
+        "destinationPortRanges": [],
+        "direction": "Inbound",
+        "priority": 2700,
+        "protocol": "*",
+        "sourceAddressPrefix": "CorpNetPublic",
+        "sourceAddressPrefixes": [],
+        "sourcePortRange": "*",
+        "sourcePortRanges": []
+      },
+      "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_vnet_hub_001_AzureBastionSubnet_nsg_westeurope_name'))]"
+      ],
+      "name": "[concat(parameters('networkSecurityGroups_vnet_hub_001_AzureBastionSubnet_nsg_westeurope_name'), '/AllowGatewayManager')]",
+      "properties": {
+        "access": "Allow",
+        "description": "Allow GatewayManager",
+        "destinationAddressPrefix": "*",
+        "destinationAddressPrefixes": [],
+        "destinationPortRange": "443",
+        "destinationPortRanges": [],
+        "direction": "Inbound",
+        "priority": 2702,
+        "protocol": "*",
+        "sourceAddressPrefix": "GatewayManager",
+        "sourceAddressPrefixes": [],
+        "sourcePortRange": "*",
+        "sourcePortRanges": []
+      },
+      "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_vnet_hub_001_AzureBastionSubnet_nsg_westeurope_name'))]"
+      ],
+      "name": "[concat(parameters('networkSecurityGroups_vnet_hub_001_AzureBastionSubnet_nsg_westeurope_name'), '/AllowHttpsInBound')]",
+      "properties": {
+        "access": "Allow",
+        "description": "Allow HTTPs",
+        "destinationAddressPrefix": "*",
+        "destinationAddressPrefixes": [],
+        "destinationPortRange": "443",
+        "destinationPortRanges": [],
+        "direction": "Inbound",
+        "priority": 2703,
+        "protocol": "*",
+        "sourceAddressPrefix": "Internet",
+        "sourceAddressPrefixes": [],
+        "sourcePortRange": "*",
+        "sourcePortRanges": []
+      },
+      "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_vnet_hub_001_AzureBastionSubnet_nsg_westeurope_name'))]"
+      ],
+      "name": "[concat(parameters('networkSecurityGroups_vnet_hub_001_AzureBastionSubnet_nsg_westeurope_name'), '/AllowSAW')]",
+      "properties": {
+        "access": "Allow",
+        "description": "CSS Governance Security Rule.  Allow SAW inbound.  https://aka.ms/casg",
+        "destinationAddressPrefix": "*",
+        "destinationAddressPrefixes": [],
+        "destinationPortRange": "*",
+        "destinationPortRanges": [],
+        "direction": "Inbound",
+        "priority": 2701,
+        "protocol": "*",
+        "sourceAddressPrefix": "CorpNetSaw",
+        "sourceAddressPrefixes": [],
+        "sourcePortRange": "*",
+        "sourcePortRanges": []
+      },
+      "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_vnet_hub_001_snet_hub_nsg_westeurope_name'))]"
+      ],
+      "name": "[concat(parameters('networkSecurityGroups_vnet_hub_001_snet_hub_nsg_westeurope_name'), '/AllowSAW')]",
+      "properties": {
+        "access": "Allow",
+        "description": "CSS Governance Security Rule.  Allow SAW inbound.  https://aka.ms/casg",
+        "destinationAddressPrefix": "*",
+        "destinationAddressPrefixes": [],
+        "destinationPortRange": "*",
+        "destinationPortRanges": [],
+        "direction": "Inbound",
+        "priority": 2701,
+        "protocol": "*",
+        "sourceAddressPrefix": "CorpNetSaw",
+        "sourceAddressPrefixes": [],
+        "sourcePortRange": "*",
+        "sourcePortRanges": []
+      },
+      "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_vnet_spoke_northeu_001_snet_vm_nsg_northeurope_name'))]"
+      ],
+      "name": "[concat(parameters('networkSecurityGroups_vnet_spoke_northeu_001_snet_vm_nsg_northeurope_name'), '/AllowSAW')]",
+      "properties": {
+        "access": "Allow",
+        "description": "CSS Governance Security Rule.  Allow SAW inbound.  https://aka.ms/casg",
+        "destinationAddressPrefix": "*",
+        "destinationAddressPrefixes": [],
+        "destinationPortRange": "*",
+        "destinationPortRanges": [],
+        "direction": "Inbound",
+        "priority": 2701,
+        "protocol": "*",
+        "sourceAddressPrefix": "CorpNetSaw",
+        "sourceAddressPrefixes": [],
+        "sourcePortRange": "*",
+        "sourcePortRanges": []
+      },
+      "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_vnet_spoke_westeu_001_snet_vm_nsg_westeurope_name'))]"
+      ],
+      "name": "[concat(parameters('networkSecurityGroups_vnet_spoke_westeu_001_snet_vm_nsg_westeurope_name'), '/AllowSAW')]",
+      "properties": {
+        "access": "Allow",
+        "description": "CSS Governance Security Rule.  Allow SAW inbound.  https://aka.ms/casg",
+        "destinationAddressPrefix": "*",
+        "destinationAddressPrefixes": [],
+        "destinationPortRange": "*",
+        "destinationPortRanges": [],
+        "direction": "Inbound",
+        "priority": 2701,
+        "protocol": "*",
+        "sourceAddressPrefix": "CorpNetSaw",
+        "sourceAddressPrefixes": [],
+        "sourcePortRange": "*",
+        "sourcePortRanges": []
+      },
+      "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_vnet_hub_001_AzureBastionSubnet_nsg_westeurope_name'))]"
+      ],
+      "name": "[concat(parameters('networkSecurityGroups_vnet_hub_001_AzureBastionSubnet_nsg_westeurope_name'), '/AllowSshRdpOutbound')]",
+      "properties": {
+        "access": "Allow",
+        "destinationAddressPrefix": "VirtualNetwork",
+        "destinationAddressPrefixes": [],
+        "destinationPortRanges": [
+          "22",
+          "3389"
+        ],
+        "direction": "Outbound",
+        "priority": 100,
+        "protocol": "*",
+        "sourceAddressPrefix": "*",
+        "sourceAddressPrefixes": [],
+        "sourcePortRange": "*",
+        "sourcePortRanges": []
+      },
+      "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_client_vm_spoke_northeu_nsg_name'))]"
+      ],
+      "name": "[concat(parameters('networkSecurityGroups_client_vm_spoke_northeu_nsg_name'), '/AllowTagSSHInbound')]",
+      "properties": {
+        "access": "Allow",
+        "destinationAddressPrefix": "*",
+        "destinationAddressPrefixes": [],
+        "destinationPortRange": "22",
+        "destinationPortRanges": [],
+        "direction": "Inbound",
+        "priority": 100,
+        "protocol": "TCP",
+        "sourceAddressPrefix": "VirtualNetwork",
+        "sourceAddressPrefixes": [],
+        "sourcePortRange": "*",
+        "sourcePortRanges": []
+      },
+      "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_client_vm_westeu_nsg_name'))]"
+      ],
+      "name": "[concat(parameters('networkSecurityGroups_client_vm_westeu_nsg_name'), '/AllowTagSSHInbound')]",
+      "properties": {
+        "access": "Allow",
+        "destinationAddressPrefix": "*",
+        "destinationAddressPrefixes": [],
+        "destinationPortRange": "22",
+        "destinationPortRanges": [],
+        "direction": "Inbound",
+        "priority": 100,
+        "protocol": "TCP",
+        "sourceAddressPrefix": "VirtualNetwork",
+        "sourceAddressPrefixes": [],
+        "sourcePortRange": "*",
+        "sourcePortRanges": []
+      },
+      "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_vnet_spoke_northeu_001_snet_vm_nsg_northeurope_name'))]"
+      ],
+      "name": "[concat(parameters('networkSecurityGroups_vnet_spoke_northeu_001_snet_vm_nsg_northeurope_name'), '/AllowTagSSHInbound')]",
+      "properties": {
+        "access": "Allow",
+        "destinationAddressPrefix": "*",
+        "destinationAddressPrefixes": [],
+        "destinationPortRange": "22",
+        "destinationPortRanges": [],
+        "direction": "Inbound",
+        "priority": 2711,
+        "protocol": "TCP",
+        "sourceAddressPrefix": "VirtualNetwork",
+        "sourceAddressPrefixes": [],
+        "sourcePortRange": "*",
+        "sourcePortRanges": []
+      },
+      "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_vnet_spoke_westeu_001_snet_vm_nsg_westeurope_name'))]"
+      ],
+      "name": "[concat(parameters('networkSecurityGroups_vnet_spoke_westeu_001_snet_vm_nsg_westeurope_name'), '/AllowTagSSHInbound')]",
+      "properties": {
+        "access": "Allow",
+        "destinationAddressPrefix": "*",
+        "destinationAddressPrefixes": [],
+        "destinationPortRange": "22",
+        "destinationPortRanges": [],
+        "direction": "Inbound",
+        "priority": 2711,
+        "protocol": "TCP",
+        "sourceAddressPrefix": "VirtualNetwork",
+        "sourceAddressPrefixes": [],
+        "sourcePortRange": "*",
+        "sourcePortRanges": []
+      },
+      "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+    },
+    {
+      "apiVersion": "2018-09-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/privateDnsZones', parameters('privateDnsZones_privatelink_database_windows_net_name'))]"
+      ],
+      "name": "[concat(parameters('privateDnsZones_privatelink_database_windows_net_name'), '/azsqltk')]",
+      "properties": {
+        "aRecords": [
+          {
+            "ipv4Address": "10.5.0.5"
+          }
+        ],
+        "metadata": {
+          "creator": "created by private endpoint pe-sql with resource guid 37e57078-4e55-463b-b6b4-0ec692fd5f3e"
+        },
+        "ttl": 10
+      },
+      "type": "Microsoft.Network/privateDnsZones/A"
+    },
+    {
+      "apiVersion": "2018-09-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/privateDnsZones', parameters('privateDnsZones_privatelink_database_windows_net_name'))]"
+      ],
+      "name": "[concat(parameters('privateDnsZones_privatelink_database_windows_net_name'), '/@')]",
+      "properties": {
+        "soaRecord": {
+          "email": "azureprivatedns-host.microsoft.com",
+          "expireTime": 2419200,
+          "host": "azureprivatedns.net",
+          "minimumTtl": 10,
+          "refreshTime": 3600,
+          "retryTime": 300,
+          "serialNumber": 1
+        },
+        "ttl": 3600
+      },
+      "type": "Microsoft.Network/privateDnsZones/SOA"
+    },
+    {
+      "apiVersion": "2022-08-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/ActiveDirectory')]",
+      "properties": {
+        "administratorType": "ActiveDirectory",
+        "login": "timo.knapp_microsoft.com#EXT#@fdpo.onmicrosoft.com",
+        "sid": "91bf285c-b3de-4482-873d-a57edafb15e9",
+        "tenantId": "16b3c013-d300-468d-ac64-7eda0820b6d3"
+      },
+      "type": "Microsoft.Sql/servers/administrators"
+    },
+    {
+      "apiVersion": "2022-08-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/Default')]",
+      "properties": {
+        "state": "Enabled"
+      },
+      "type": "Microsoft.Sql/servers/advancedThreatProtectionSettings"
+    },
+    {
+      "apiVersion": "2014-04-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/CreateIndex')]",
+      "properties": {
+        "autoExecuteValue": "Disabled"
+      },
+      "type": "Microsoft.Sql/servers/advisors"
+    },
+    {
+      "apiVersion": "2014-04-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/DbParameterization')]",
+      "properties": {
+        "autoExecuteValue": "Disabled"
+      },
+      "type": "Microsoft.Sql/servers/advisors"
+    },
+    {
+      "apiVersion": "2014-04-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/DefragmentIndex')]",
+      "properties": {
+        "autoExecuteValue": "Disabled"
+      },
+      "type": "Microsoft.Sql/servers/advisors"
+    },
+    {
+      "apiVersion": "2014-04-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/DropIndex')]",
+      "properties": {
+        "autoExecuteValue": "Disabled"
+      },
+      "type": "Microsoft.Sql/servers/advisors"
+    },
+    {
+      "apiVersion": "2014-04-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/ForceLastGoodPlan')]",
+      "properties": {
+        "autoExecuteValue": "Enabled"
+      },
+      "type": "Microsoft.Sql/servers/advisors"
+    },
+    {
+      "apiVersion": "2014-04-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "location": "West Europe",
+      "name": "[concat(parameters('servers_azsqltk_name'), '/Default')]",
+      "properties": {
+        "auditingState": "Disabled"
+      },
+      "type": "Microsoft.Sql/servers/auditingPolicies"
+    },
+    {
+      "apiVersion": "2022-08-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/Default')]",
+      "properties": {
+        "auditActionsAndGroups": [
+          "SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP",
+          "FAILED_DATABASE_AUTHENTICATION_GROUP",
+          "BATCH_COMPLETED_GROUP"
+        ],
+        "isAzureMonitorTargetEnabled": false,
+        "isManagedIdentityInUse": false,
+        "isStorageSecondaryKeyInUse": false,
+        "retentionDays": 60,
+        "state": "Enabled",
+        "storageAccountSubscriptionId": "6b76ff87-a921-49fe-a04a-92aebd1ac6fa",
+        "storageEndpoint": "https://mcapsgovcsqlauditstorage.blob.core.windows.net/"
+      },
+      "type": "Microsoft.Sql/servers/auditingSettings"
+    },
+    {
+      "apiVersion": "2022-08-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/Default')]",
+      "properties": {
+        "azureADOnlyAuthentication": false
+      },
+      "type": "Microsoft.Sql/servers/azureADOnlyAuthentications"
+    },
+    {
+      "apiVersion": "2022-08-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "location": "westeurope",
+      "name": "[concat(parameters('servers_azsqltk_name'), '/default')]",
+      "properties": {
+        "connectionType": "Default"
+      },
+      "type": "Microsoft.Sql/servers/connectionPolicies"
+    },
+    {
+      "apiVersion": "2022-08-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "kind": "v12.0,user,vcore",
+      "location": "westeurope",
+      "name": "[concat(parameters('servers_azsqltk_name'), '/db')]",
+      "properties": {
+        "availabilityZone": "NoPreference",
+        "catalogCollation": "SQL_Latin1_General_CP1_CI_AS",
+        "collation": "SQL_Latin1_General_CP1_CI_AS",
+        "isLedgerOn": false,
+        "licenseType": "LicenseIncluded",
+        "maintenanceConfigurationId": "/subscriptions/08af9d7a-c4a4-4858-827f-2a27ef8b6245/providers/Microsoft.Maintenance/publicMaintenanceConfigurations/SQL_Default",
+        "maxSizeBytes": 34359738368,
+        "readScale": "Disabled",
+        "requestedBackupStorageRedundancy": "Local",
+        "zoneRedundant": false
+      },
+      "sku": {
+        "capacity": 2,
+        "family": "Gen5",
+        "name": "GP_Gen5",
+        "tier": "GeneralPurpose"
+      },
+      "type": "Microsoft.Sql/servers/databases"
+    },
+    {
+      "apiVersion": "2022-08-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/master/Default')]",
+      "properties": {
+        "state": "Disabled"
+      },
+      "type": "Microsoft.Sql/servers/databases/advancedThreatProtectionSettings"
+    },
+    {
+      "apiVersion": "2014-04-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "location": "West Europe",
+      "name": "[concat(parameters('servers_azsqltk_name'), '/master/Default')]",
+      "properties": {
+        "auditingState": "Disabled"
+      },
+      "type": "Microsoft.Sql/servers/databases/auditingPolicies"
+    },
+    {
+      "apiVersion": "2022-08-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/master/Default')]",
+      "properties": {
+        "auditActionsAndGroups": [],
+        "isAzureMonitorTargetEnabled": false,
+        "isManagedIdentityInUse": false,
+        "isStorageSecondaryKeyInUse": false,
+        "retentionDays": 0,
+        "state": "Disabled",
+        "storageAccountSubscriptionId": "00000000-0000-0000-0000-000000000000"
+      },
+      "type": "Microsoft.Sql/servers/databases/auditingSettings"
+    },
+    {
+      "apiVersion": "2022-08-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/master/Default')]",
+      "properties": {
+        "auditActionsAndGroups": [],
+        "isAzureMonitorTargetEnabled": false,
+        "isManagedIdentityInUse": false,
+        "isStorageSecondaryKeyInUse": false,
+        "retentionDays": 0,
+        "state": "Disabled",
+        "storageAccountSubscriptionId": "00000000-0000-0000-0000-000000000000"
+      },
+      "type": "Microsoft.Sql/servers/databases/extendedAuditingSettings"
+    },
+    {
+      "apiVersion": "2022-08-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/master/Default')]",
+      "properties": {
+        "state": "Disabled"
+      },
+      "type": "Microsoft.Sql/servers/databases/geoBackupPolicies"
+    },
+    {
+      "apiVersion": "2022-08-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/master/Current')]",
+      "properties": {},
+      "type": "Microsoft.Sql/servers/databases/ledgerDigestUploads"
+    },
+    {
+      "apiVersion": "2022-08-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/master/Default')]",
+      "properties": {
+        "disabledAlerts": [
+          ""
+        ],
+        "emailAccountAdmins": false,
+        "emailAddresses": [
+          ""
+        ],
+        "retentionDays": 0,
+        "state": "Disabled"
+      },
+      "type": "Microsoft.Sql/servers/databases/securityAlertPolicies"
+    },
+    {
+      "apiVersion": "2022-08-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/master/Current')]",
+      "properties": {
+        "state": "Disabled"
+      },
+      "type": "Microsoft.Sql/servers/databases/transparentDataEncryption"
+    },
+    {
+      "apiVersion": "2022-08-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/master/Default')]",
+      "properties": {
+        "recurringScans": {
+          "emailSubscriptionAdmins": true,
+          "isEnabled": false
+        }
+      },
+      "type": "Microsoft.Sql/servers/databases/vulnerabilityAssessments"
+    },
+    {
+      "apiVersion": "2022-08-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/Default')]",
+      "properties": {
+        "isAzureMonitorTargetEnabled": false,
+        "isManagedIdentityInUse": false,
+        "state": "Disabled",
+        "storageAccountSubscriptionId": "00000000-0000-0000-0000-000000000000"
+      },
+      "type": "Microsoft.Sql/servers/devOpsAuditingSettings"
+    },
+    {
+      "apiVersion": "2022-08-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "kind": "servicemanaged",
+      "name": "[concat(parameters('servers_azsqltk_name'), '/current')]",
+      "properties": {
+        "autoRotationEnabled": false,
+        "serverKeyName": "ServiceManaged",
+        "serverKeyType": "ServiceManaged"
+      },
+      "type": "Microsoft.Sql/servers/encryptionProtector"
+    },
+    {
+      "apiVersion": "2022-08-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/Default')]",
+      "properties": {
+        "auditActionsAndGroups": [
+          "SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP",
+          "FAILED_DATABASE_AUTHENTICATION_GROUP",
+          "BATCH_COMPLETED_GROUP"
+        ],
+        "isAzureMonitorTargetEnabled": false,
+        "isManagedIdentityInUse": false,
+        "isStorageSecondaryKeyInUse": false,
+        "retentionDays": 60,
+        "state": "Enabled",
+        "storageAccountSubscriptionId": "6b76ff87-a921-49fe-a04a-92aebd1ac6fa",
+        "storageEndpoint": "https://mcapsgovcsqlauditstorage.blob.core.windows.net/"
+      },
+      "type": "Microsoft.Sql/servers/extendedAuditingSettings"
+    },
+    {
+      "apiVersion": "2022-08-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "kind": "servicemanaged",
+      "name": "[concat(parameters('servers_azsqltk_name'), '/ServiceManaged')]",
+      "properties": {
+        "serverKeyType": "ServiceManaged"
+      },
+      "type": "Microsoft.Sql/servers/keys"
+    },
+    {
+      "apiVersion": "2022-08-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/Default')]",
+      "properties": {
+        "disabledAlerts": [
+          ""
+        ],
+        "emailAccountAdmins": false,
+        "emailAddresses": [
+          ""
+        ],
+        "retentionDays": 0,
+        "state": "Enabled"
+      },
+      "type": "Microsoft.Sql/servers/securityAlertPolicies"
+    },
+    {
+      "apiVersion": "2022-08-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/Default')]",
+      "properties": {
+        "state": "Disabled"
+      },
+      "type": "Microsoft.Sql/servers/sqlVulnerabilityAssessments"
+    },
+    {
+      "apiVersion": "2022-08-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/Default')]",
+      "properties": {
+        "recurringScans": {
+          "emailSubscriptionAdmins": true,
+          "isEnabled": false
+        },
+        "storageContainerPath": "[parameters('vulnerabilityAssessments_Default_storageContainerPath')]"
+      },
+      "type": "Microsoft.Sql/servers/vulnerabilityAssessments"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_vnet_hub_001_ip_name'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_hub_001_name'), 'AzureBastionSubnet')]"
+      ],
+      "location": "westeurope",
+      "name": "[parameters('bastionHosts_bst_hub_name')]",
+      "properties": {
+        "disableCopyPaste": false,
+        "dnsName": "bst-b0d1a2f4-c8d6-41cc-8432-343d8a5684c2.bastion.azure.com",
+        "enableIpConnect": false,
+        "enableKerberos": false,
+        "enableShareableLink": false,
+        "enableTunneling": false,
+        "ipConfigurations": [
+          {
+            "id": "[concat(resourceId('Microsoft.Network/bastionHosts', parameters('bastionHosts_bst_hub_name')), '/bastionHostIpConfigurations/IpConf')]",
+            "name": "IpConf",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_vnet_hub_001_ip_name'))]"
+              },
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_hub_001_name'), 'AzureBastionSubnet')]"
+              }
+            }
+          }
+        ],
+        "scaleUnits": 2
+      },
+      "sku": {
+        "name": "Standard"
+      },
+      "type": "Microsoft.Network/bastionHosts"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_spoke_northeu_001_name'), 'snet-vm')]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_client_vm_spoke_northeu_nsg_name'))]"
+      ],
+      "kind": "Regular",
+      "location": "northeurope",
+      "name": "[parameters('networkInterfaces_client_vm_spoke_northeu33_z1_name')]",
+      "properties": {
+        "disableTcpStateTracking": false,
+        "dnsSettings": {
+          "dnsServers": []
+        },
+        "enableAcceleratedNetworking": false,
+        "enableIPForwarding": false,
+        "ipConfigurations": [
+          {
+            "etag": "W/\"1ce5957b-8bee-4312-9492-29481fb94383\"",
+            "id": "[concat(resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_client_vm_spoke_northeu33_z1_name')), '/ipConfigurations/ipconfig1')]",
+            "name": "ipconfig1",
+            "properties": {
+              "primary": true,
+              "privateIPAddress": "10.10.0.4",
+              "privateIPAddressVersion": "IPv4",
+              "privateIPAllocationMethod": "Dynamic",
+              "provisioningState": "Succeeded",
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_spoke_northeu_001_name'), 'snet-vm')]"
+              }
+            },
+            "type": "Microsoft.Network/networkInterfaces/ipConfigurations"
+          }
+        ],
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_client_vm_spoke_northeu_nsg_name'))]"
+        },
+        "nicType": "Standard"
+      },
+      "type": "Microsoft.Network/networkInterfaces"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_spoke_westeu_001_name'), 'snet-vm')]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_client_vm_westeu_nsg_name'))]"
+      ],
+      "kind": "Regular",
+      "location": "westeurope",
+      "name": "[parameters('networkInterfaces_client_vm_westeu116_z1_name')]",
+      "properties": {
+        "disableTcpStateTracking": false,
+        "dnsSettings": {
+          "dnsServers": []
+        },
+        "enableAcceleratedNetworking": false,
+        "enableIPForwarding": false,
+        "ipConfigurations": [
+          {
+            "etag": "W/\"5354141d-89cf-4830-885c-92d45ad0edac\"",
+            "id": "[concat(resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_client_vm_westeu116_z1_name')), '/ipConfigurations/ipconfig1')]",
+            "name": "ipconfig1",
+            "properties": {
+              "primary": true,
+              "privateIPAddress": "10.20.0.4",
+              "privateIPAddressVersion": "IPv4",
+              "privateIPAllocationMethod": "Dynamic",
+              "provisioningState": "Succeeded",
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_spoke_westeu_001_name'), 'snet-vm')]"
+              }
+            },
+            "type": "Microsoft.Network/networkInterfaces/ipConfigurations"
+          }
+        ],
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_client_vm_westeu_nsg_name'))]"
+        },
+        "nicType": "Standard"
+      },
+      "type": "Microsoft.Network/networkInterfaces"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_vnet_hub_001_snet_hub_nsg_westeurope_name'), 'AllowCorpnet')]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_vnet_hub_001_snet_hub_nsg_westeurope_name'), 'AllowSAW')]"
+      ],
+      "location": "westeurope",
+      "name": "[parameters('networkSecurityGroups_vnet_hub_001_snet_hub_nsg_westeurope_name')]",
+      "properties": {
+        "securityRules": [
+          {
+            "id": "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_vnet_hub_001_snet_hub_nsg_westeurope_name'), 'AllowCorpnet')]",
+            "name": "AllowCorpnet",
+            "properties": {
+              "access": "Allow",
+              "description": "CSS Governance Security Rule.  Allow Corpnet inbound.  https://aka.ms/casg",
+              "destinationAddressPrefix": "*",
+              "destinationAddressPrefixes": [],
+              "destinationPortRange": "*",
+              "destinationPortRanges": [],
+              "direction": "Inbound",
+              "priority": 2700,
+              "protocol": "*",
+              "sourceAddressPrefix": "CorpNetPublic",
+              "sourceAddressPrefixes": [],
+              "sourcePortRange": "*",
+              "sourcePortRanges": []
+            },
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+          },
+          {
+            "id": "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_vnet_hub_001_snet_hub_nsg_westeurope_name'), 'AllowSAW')]",
+            "name": "AllowSAW",
+            "properties": {
+              "access": "Allow",
+              "description": "CSS Governance Security Rule.  Allow SAW inbound.  https://aka.ms/casg",
+              "destinationAddressPrefix": "*",
+              "destinationAddressPrefixes": [],
+              "destinationPortRange": "*",
+              "destinationPortRanges": [],
+              "direction": "Inbound",
+              "priority": 2701,
+              "protocol": "*",
+              "sourceAddressPrefix": "CorpNetSaw",
+              "sourceAddressPrefixes": [],
+              "sourcePortRange": "*",
+              "sourcePortRanges": []
+            },
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+          }
+        ]
+      },
+      "type": "Microsoft.Network/networkSecurityGroups"
+    },
+    {
+      "apiVersion": "2018-09-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/privateDnsZones', parameters('privateDnsZones_privatelink_database_windows_net_name'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_spoke_northeu_001_name'))]"
+      ],
+      "location": "global",
+      "name": "[concat(parameters('privateDnsZones_privatelink_database_windows_net_name'), '/spoke-northeu')]",
+      "properties": {
+        "registrationEnabled": true,
+        "virtualNetwork": {
+          "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_spoke_northeu_001_name'))]"
+        }
+      },
+      "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks"
+    },
+    {
+      "apiVersion": "2018-09-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/privateDnsZones', parameters('privateDnsZones_privatelink_database_windows_net_name'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_spoke_westeu_001_name'))]"
+      ],
+      "location": "global",
+      "name": "[concat(parameters('privateDnsZones_privatelink_database_windows_net_name'), '/spoke-westeu')]",
+      "properties": {
+        "registrationEnabled": true,
+        "virtualNetwork": {
+          "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_spoke_westeu_001_name'))]"
+        }
+      },
+      "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_hub_001_name'), 'snet-hub')]"
+      ],
+      "location": "westeurope",
+      "name": "[parameters('privateEndpoints_pe_sql_name')]",
+      "properties": {
+        "customDnsConfigs": [],
+        "customNetworkInterfaceName": "[concat(parameters('privateEndpoints_pe_sql_name'), '-nic')]",
+        "ipConfigurations": [
+          {
+            "name": "[parameters('privateEndpoints_pe_sql_name')]",
+            "properties": {
+              "groupId": "sqlServer",
+              "memberName": "sqlServer",
+              "privateIPAddress": "10.5.0.5"
+            }
+          }
+        ],
+        "manualPrivateLinkServiceConnections": [],
+        "privateLinkServiceConnections": [
+          {
+            "id": "[concat(resourceId('Microsoft.Network/privateEndpoints', parameters('privateEndpoints_pe_sql_name')), concat('/privateLinkServiceConnections/', parameters('privateEndpoints_pe_sql_name')))]",
+            "name": "[parameters('privateEndpoints_pe_sql_name')]",
+            "properties": {
+              "groupIds": [
+                "sqlServer"
+              ],
+              "privateLinkServiceConnectionState": {
+                "actionsRequired": "None",
+                "description": "Auto-approved",
+                "status": "Approved"
+              },
+              "privateLinkServiceId": "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+            }
+          }
+        ],
+        "subnet": {
+          "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_hub_001_name'), 'snet-hub')]"
+        }
+      },
+      "type": "Microsoft.Network/privateEndpoints"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/privateEndpoints', parameters('privateEndpoints_pe_sql_name'))]",
+        "[resourceId('Microsoft.Network/privateDnsZones', parameters('privateDnsZones_privatelink_database_windows_net_name'))]"
+      ],
+      "name": "[concat(parameters('privateEndpoints_pe_sql_name'), '/default')]",
+      "properties": {
+        "privateDnsZoneConfigs": [
+          {
+            "name": "privatelink-database-windows-net",
+            "properties": {
+              "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', parameters('privateDnsZones_privatelink_database_windows_net_name'))]"
+            }
+          }
+        ]
+      },
+      "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_hub_001_name'))]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_vnet_hub_001_AzureBastionSubnet_nsg_westeurope_name'))]"
+      ],
+      "name": "[concat(parameters('virtualNetworks_vnet_hub_001_name'), '/AzureBastionSubnet')]",
+      "properties": {
+        "addressPrefix": "10.5.0.128/26",
+        "delegations": [],
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_vnet_hub_001_AzureBastionSubnet_nsg_westeurope_name'))]"
+        },
+        "privateEndpointNetworkPolicies": "Disabled",
+        "privateLinkServiceNetworkPolicies": "Enabled",
+        "serviceEndpoints": []
+      },
+      "type": "Microsoft.Network/virtualNetworks/subnets"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_hub_001_name'))]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_vnet_hub_001_snet_hub_nsg_westeurope_name'))]"
+      ],
+      "name": "[concat(parameters('virtualNetworks_vnet_hub_001_name'), '/snet-hub')]",
+      "properties": {
+        "addressPrefix": "10.5.0.0/25",
+        "delegations": [],
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_vnet_hub_001_snet_hub_nsg_westeurope_name'))]"
+        },
+        "privateEndpointNetworkPolicies": "Disabled",
+        "privateLinkServiceNetworkPolicies": "Enabled",
+        "serviceEndpoints": [
+          {
+            "locations": [
+              "westeurope"
+            ],
+            "service": "Microsoft.Sql"
+          }
+        ]
+      },
+      "type": "Microsoft.Network/virtualNetworks/subnets"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_spoke_northeu_001_name'))]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_vnet_spoke_northeu_001_snet_vm_nsg_northeurope_name'))]"
+      ],
+      "name": "[concat(parameters('virtualNetworks_vnet_spoke_northeu_001_name'), '/snet-vm')]",
+      "properties": {
+        "addressPrefix": "10.10.0.0/25",
+        "delegations": [],
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_vnet_spoke_northeu_001_snet_vm_nsg_northeurope_name'))]"
+        },
+        "privateEndpointNetworkPolicies": "Disabled",
+        "privateLinkServiceNetworkPolicies": "Enabled",
+        "serviceEndpoints": []
+      },
+      "type": "Microsoft.Network/virtualNetworks/subnets"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_spoke_westeu_001_name'))]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_vnet_spoke_westeu_001_snet_vm_nsg_westeurope_name'))]"
+      ],
+      "name": "[concat(parameters('virtualNetworks_vnet_spoke_westeu_001_name'), '/snet-vm')]",
+      "properties": {
+        "addressPrefix": "10.20.0.0/25",
+        "delegations": [],
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_vnet_spoke_westeu_001_snet_vm_nsg_westeurope_name'))]"
+        },
+        "privateEndpointNetworkPolicies": "Disabled",
+        "privateLinkServiceNetworkPolicies": "Enabled",
+        "serviceEndpoints": []
+      },
+      "type": "Microsoft.Network/virtualNetworks/subnets"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_spoke_northeu_001_name'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_hub_001_name'))]"
+      ],
+      "name": "[concat(parameters('virtualNetworks_vnet_spoke_northeu_001_name'), '/hub')]",
+      "properties": {
+        "allowForwardedTraffic": true,
+        "allowGatewayTransit": false,
+        "allowVirtualNetworkAccess": true,
+        "doNotVerifyRemoteGateways": false,
+        "peeringState": "Connected",
+        "peeringSyncLevel": "FullyInSync",
+        "remoteAddressSpace": {
+          "addressPrefixes": [
+            "10.5.0.0/24"
+          ]
+        },
+        "remoteVirtualNetwork": {
+          "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_hub_001_name'))]"
+        },
+        "remoteVirtualNetworkAddressSpace": {
+          "addressPrefixes": [
+            "10.5.0.0/24"
+          ]
+        },
+        "useRemoteGateways": false
+      },
+      "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_spoke_westeu_001_name'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_hub_001_name'))]"
+      ],
+      "name": "[concat(parameters('virtualNetworks_vnet_spoke_westeu_001_name'), '/hub')]",
+      "properties": {
+        "allowForwardedTraffic": true,
+        "allowGatewayTransit": false,
+        "allowVirtualNetworkAccess": true,
+        "doNotVerifyRemoteGateways": false,
+        "peeringState": "Connected",
+        "peeringSyncLevel": "FullyInSync",
+        "remoteAddressSpace": {
+          "addressPrefixes": [
+            "10.5.0.0/24"
+          ]
+        },
+        "remoteVirtualNetwork": {
+          "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_hub_001_name'))]"
+        },
+        "remoteVirtualNetworkAddressSpace": {
+          "addressPrefixes": [
+            "10.5.0.0/24"
+          ]
+        },
+        "useRemoteGateways": false
+      },
+      "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_hub_001_name'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_spoke_northeu_001_name'))]"
+      ],
+      "name": "[concat(parameters('virtualNetworks_vnet_hub_001_name'), '/spoke-northeu')]",
+      "properties": {
+        "allowForwardedTraffic": true,
+        "allowGatewayTransit": false,
+        "allowVirtualNetworkAccess": true,
+        "doNotVerifyRemoteGateways": false,
+        "peeringState": "Connected",
+        "peeringSyncLevel": "FullyInSync",
+        "remoteAddressSpace": {
+          "addressPrefixes": [
+            "10.10.0.0/24"
+          ]
+        },
+        "remoteVirtualNetwork": {
+          "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_spoke_northeu_001_name'))]"
+        },
+        "remoteVirtualNetworkAddressSpace": {
+          "addressPrefixes": [
+            "10.10.0.0/24"
+          ]
+        },
+        "useRemoteGateways": false
+      },
+      "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_hub_001_name'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_spoke_westeu_001_name'))]"
+      ],
+      "name": "[concat(parameters('virtualNetworks_vnet_hub_001_name'), '/spoke-westeu')]",
+      "properties": {
+        "allowForwardedTraffic": true,
+        "allowGatewayTransit": false,
+        "allowVirtualNetworkAccess": true,
+        "doNotVerifyRemoteGateways": false,
+        "peeringState": "Connected",
+        "peeringSyncLevel": "FullyInSync",
+        "remoteAddressSpace": {
+          "addressPrefixes": [
+            "10.20.0.0/24"
+          ]
+        },
+        "remoteVirtualNetwork": {
+          "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_spoke_westeu_001_name'))]"
+        },
+        "remoteVirtualNetworkAddressSpace": {
+          "addressPrefixes": [
+            "10.20.0.0/24"
+          ]
+        },
+        "useRemoteGateways": false
+      },
+      "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings"
+    },
+    {
+      "apiVersion": "2022-08-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers/databases', parameters('servers_azsqltk_name'), 'db')]",
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/db/Default')]",
+      "properties": {
+        "state": "Disabled"
+      },
+      "type": "Microsoft.Sql/servers/databases/advancedThreatProtectionSettings"
+    },
+    {
+      "apiVersion": "2014-04-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers/databases', parameters('servers_azsqltk_name'), 'db')]",
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/db/CreateIndex')]",
+      "properties": {
+        "autoExecuteValue": "Disabled"
+      },
+      "type": "Microsoft.Sql/servers/databases/advisors"
+    },
+    {
+      "apiVersion": "2014-04-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers/databases', parameters('servers_azsqltk_name'), 'db')]",
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/db/DbParameterization')]",
+      "properties": {
+        "autoExecuteValue": "Disabled"
+      },
+      "type": "Microsoft.Sql/servers/databases/advisors"
+    },
+    {
+      "apiVersion": "2014-04-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers/databases', parameters('servers_azsqltk_name'), 'db')]",
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/db/DefragmentIndex')]",
+      "properties": {
+        "autoExecuteValue": "Disabled"
+      },
+      "type": "Microsoft.Sql/servers/databases/advisors"
+    },
+    {
+      "apiVersion": "2014-04-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers/databases', parameters('servers_azsqltk_name'), 'db')]",
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/db/DropIndex')]",
+      "properties": {
+        "autoExecuteValue": "Disabled"
+      },
+      "type": "Microsoft.Sql/servers/databases/advisors"
+    },
+    {
+      "apiVersion": "2014-04-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers/databases', parameters('servers_azsqltk_name'), 'db')]",
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/db/ForceLastGoodPlan')]",
+      "properties": {
+        "autoExecuteValue": "Enabled"
+      },
+      "type": "Microsoft.Sql/servers/databases/advisors"
+    },
+    {
+      "apiVersion": "2014-04-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers/databases', parameters('servers_azsqltk_name'), 'db')]",
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "location": "West Europe",
+      "name": "[concat(parameters('servers_azsqltk_name'), '/db/Default')]",
+      "properties": {
+        "auditingState": "Disabled"
+      },
+      "type": "Microsoft.Sql/servers/databases/auditingPolicies"
+    },
+    {
+      "apiVersion": "2022-08-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers/databases', parameters('servers_azsqltk_name'), 'db')]",
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/db/Default')]",
+      "properties": {
+        "auditActionsAndGroups": [],
+        "isAzureMonitorTargetEnabled": false,
+        "isManagedIdentityInUse": false,
+        "isStorageSecondaryKeyInUse": false,
+        "retentionDays": 0,
+        "state": "Disabled",
+        "storageAccountSubscriptionId": "00000000-0000-0000-0000-000000000000"
+      },
+      "type": "Microsoft.Sql/servers/databases/auditingSettings"
+    },
+    {
+      "apiVersion": "2022-08-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers/databases', parameters('servers_azsqltk_name'), 'db')]",
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/db/default')]",
+      "properties": {
+        "monthlyRetention": "PT0S",
+        "weekOfYear": 0,
+        "weeklyRetention": "PT0S",
+        "yearlyRetention": "PT0S"
+      },
+      "type": "Microsoft.Sql/servers/databases/backupLongTermRetentionPolicies"
+    },
+    {
+      "apiVersion": "2022-08-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers/databases', parameters('servers_azsqltk_name'), 'db')]",
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/db/default')]",
+      "properties": {
+        "diffBackupIntervalInHours": 12,
+        "retentionDays": 7
+      },
+      "type": "Microsoft.Sql/servers/databases/backupShortTermRetentionPolicies"
+    },
+    {
+      "apiVersion": "2022-08-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers/databases', parameters('servers_azsqltk_name'), 'db')]",
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/db/Default')]",
+      "properties": {
+        "auditActionsAndGroups": [],
+        "isAzureMonitorTargetEnabled": false,
+        "isManagedIdentityInUse": false,
+        "isStorageSecondaryKeyInUse": false,
+        "retentionDays": 0,
+        "state": "Disabled",
+        "storageAccountSubscriptionId": "00000000-0000-0000-0000-000000000000"
+      },
+      "type": "Microsoft.Sql/servers/databases/extendedAuditingSettings"
+    },
+    {
+      "apiVersion": "2022-08-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers/databases', parameters('servers_azsqltk_name'), 'db')]",
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/db/Default')]",
+      "properties": {
+        "state": "Disabled"
+      },
+      "type": "Microsoft.Sql/servers/databases/geoBackupPolicies"
+    },
+    {
+      "apiVersion": "2022-08-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers/databases', parameters('servers_azsqltk_name'), 'db')]",
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/db/Current')]",
+      "properties": {},
+      "type": "Microsoft.Sql/servers/databases/ledgerDigestUploads"
+    },
+    {
+      "apiVersion": "2022-08-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers/databases', parameters('servers_azsqltk_name'), 'db')]",
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/db/Default')]",
+      "properties": {
+        "disabledAlerts": [
+          ""
+        ],
+        "emailAccountAdmins": false,
+        "emailAddresses": [
+          ""
+        ],
+        "retentionDays": 0,
+        "state": "Disabled"
+      },
+      "type": "Microsoft.Sql/servers/databases/securityAlertPolicies"
+    },
+    {
+      "apiVersion": "2022-08-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers/databases', parameters('servers_azsqltk_name'), 'db')]",
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/db/Current')]",
+      "properties": {
+        "state": "Enabled"
+      },
+      "type": "Microsoft.Sql/servers/databases/transparentDataEncryption"
+    },
+    {
+      "apiVersion": "2022-08-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers/databases', parameters('servers_azsqltk_name'), 'db')]",
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/db/Default')]",
+      "properties": {
+        "recurringScans": {
+          "emailSubscriptionAdmins": true,
+          "isEnabled": false
+        }
+      },
+      "type": "Microsoft.Sql/servers/databases/vulnerabilityAssessments"
+    },
+    {
+      "apiVersion": "2022-08-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]",
+        "[resourceId('Microsoft.Network/privateEndpoints', parameters('privateEndpoints_pe_sql_name'))]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/pe-sql-1176c4ee-3b54-4678-8052-d46e6db91dcd')]",
+      "properties": {
+        "privateEndpoint": {
+          "id": "[resourceId('Microsoft.Network/privateEndpoints', parameters('privateEndpoints_pe_sql_name'))]"
+        },
+        "privateLinkServiceConnectionState": {
+          "description": "Auto-approved",
+          "status": "Approved"
+        }
+      },
+      "type": "Microsoft.Sql/servers/privateEndpointConnections"
+    },
+    {
+      "apiVersion": "2022-08-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('servers_azsqltk_name'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_hub_001_name'), 'snet-hub')]"
+      ],
+      "name": "[concat(parameters('servers_azsqltk_name'), '/vnet-hub-rule')]",
+      "properties": {
+        "ignoreMissingVnetServiceEndpoint": false,
+        "virtualNetworkSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_hub_001_name'), 'snet-hub')]"
+      },
+      "type": "Microsoft.Sql/servers/virtualNetworkRules"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_vnet_spoke_northeu_001_snet_vm_nsg_northeurope_name'), 'AllowCorpnet')]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_vnet_spoke_northeu_001_snet_vm_nsg_northeurope_name'), 'AllowSAW')]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_vnet_spoke_northeu_001_snet_vm_nsg_northeurope_name'), 'AllowTagSSHInbound')]"
+      ],
+      "location": "northeurope",
+      "name": "[parameters('networkSecurityGroups_vnet_spoke_northeu_001_snet_vm_nsg_northeurope_name')]",
+      "properties": {
+        "securityRules": [
+          {
+            "id": "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_vnet_spoke_northeu_001_snet_vm_nsg_northeurope_name'), 'AllowCorpnet')]",
+            "name": "AllowCorpnet",
+            "properties": {
+              "access": "Allow",
+              "description": "CSS Governance Security Rule.  Allow Corpnet inbound.  https://aka.ms/casg",
+              "destinationAddressPrefix": "*",
+              "destinationAddressPrefixes": [],
+              "destinationPortRange": "*",
+              "destinationPortRanges": [],
+              "direction": "Inbound",
+              "priority": 2700,
+              "protocol": "*",
+              "sourceAddressPrefix": "CorpNetPublic",
+              "sourceAddressPrefixes": [],
+              "sourcePortRange": "*",
+              "sourcePortRanges": []
+            },
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+          },
+          {
+            "id": "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_vnet_spoke_northeu_001_snet_vm_nsg_northeurope_name'), 'AllowSAW')]",
+            "name": "AllowSAW",
+            "properties": {
+              "access": "Allow",
+              "description": "CSS Governance Security Rule.  Allow SAW inbound.  https://aka.ms/casg",
+              "destinationAddressPrefix": "*",
+              "destinationAddressPrefixes": [],
+              "destinationPortRange": "*",
+              "destinationPortRanges": [],
+              "direction": "Inbound",
+              "priority": 2701,
+              "protocol": "*",
+              "sourceAddressPrefix": "CorpNetSaw",
+              "sourceAddressPrefixes": [],
+              "sourcePortRange": "*",
+              "sourcePortRanges": []
+            },
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+          },
+          {
+            "id": "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_vnet_spoke_northeu_001_snet_vm_nsg_northeurope_name'), 'AllowTagSSHInbound')]",
+            "name": "AllowTagSSHInbound",
+            "properties": {
+              "access": "Allow",
+              "destinationAddressPrefix": "*",
+              "destinationAddressPrefixes": [],
+              "destinationPortRange": "22",
+              "destinationPortRanges": [],
+              "direction": "Inbound",
+              "priority": 2711,
+              "protocol": "TCP",
+              "sourceAddressPrefix": "VirtualNetwork",
+              "sourceAddressPrefixes": [],
+              "sourcePortRange": "*",
+              "sourcePortRanges": []
+            },
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+          }
+        ]
+      },
+      "type": "Microsoft.Network/networkSecurityGroups"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_vnet_spoke_westeu_001_snet_vm_nsg_westeurope_name'), 'AllowCorpnet')]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_vnet_spoke_westeu_001_snet_vm_nsg_westeurope_name'), 'AllowSAW')]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_vnet_spoke_westeu_001_snet_vm_nsg_westeurope_name'), 'AllowTagSSHInbound')]"
+      ],
+      "location": "westeurope",
+      "name": "[parameters('networkSecurityGroups_vnet_spoke_westeu_001_snet_vm_nsg_westeurope_name')]",
+      "properties": {
+        "securityRules": [
+          {
+            "id": "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_vnet_spoke_westeu_001_snet_vm_nsg_westeurope_name'), 'AllowCorpnet')]",
+            "name": "AllowCorpnet",
+            "properties": {
+              "access": "Allow",
+              "description": "CSS Governance Security Rule.  Allow Corpnet inbound.  https://aka.ms/casg",
+              "destinationAddressPrefix": "*",
+              "destinationAddressPrefixes": [],
+              "destinationPortRange": "*",
+              "destinationPortRanges": [],
+              "direction": "Inbound",
+              "priority": 2700,
+              "protocol": "*",
+              "sourceAddressPrefix": "CorpNetPublic",
+              "sourceAddressPrefixes": [],
+              "sourcePortRange": "*",
+              "sourcePortRanges": []
+            },
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+          },
+          {
+            "id": "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_vnet_spoke_westeu_001_snet_vm_nsg_westeurope_name'), 'AllowSAW')]",
+            "name": "AllowSAW",
+            "properties": {
+              "access": "Allow",
+              "description": "CSS Governance Security Rule.  Allow SAW inbound.  https://aka.ms/casg",
+              "destinationAddressPrefix": "*",
+              "destinationAddressPrefixes": [],
+              "destinationPortRange": "*",
+              "destinationPortRanges": [],
+              "direction": "Inbound",
+              "priority": 2701,
+              "protocol": "*",
+              "sourceAddressPrefix": "CorpNetSaw",
+              "sourceAddressPrefixes": [],
+              "sourcePortRange": "*",
+              "sourcePortRanges": []
+            },
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+          },
+          {
+            "id": "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_vnet_spoke_westeu_001_snet_vm_nsg_westeurope_name'), 'AllowTagSSHInbound')]",
+            "name": "AllowTagSSHInbound",
+            "properties": {
+              "access": "Allow",
+              "destinationAddressPrefix": "*",
+              "destinationAddressPrefixes": [],
+              "destinationPortRange": "22",
+              "destinationPortRanges": [],
+              "direction": "Inbound",
+              "priority": 2711,
+              "protocol": "TCP",
+              "sourceAddressPrefix": "VirtualNetwork",
+              "sourceAddressPrefixes": [],
+              "sourcePortRange": "*",
+              "sourcePortRanges": []
+            },
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+          }
+        ]
+      },
+      "type": "Microsoft.Network/networkSecurityGroups"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_spoke_northeu_001_name'), 'snet-vm')]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_vnet_spoke_northeu_001_snet_vm_nsg_northeurope_name'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/virtualNetworkPeerings', parameters('virtualNetworks_vnet_spoke_northeu_001_name'), 'hub')]",
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_hub_001_name'))]"
+      ],
+      "location": "northeurope",
+      "name": "[parameters('virtualNetworks_vnet_spoke_northeu_001_name')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "10.10.0.0/24"
+          ]
+        },
+        "dhcpOptions": {
+          "dnsServers": []
+        },
+        "enableDdosProtection": false,
+        "subnets": [
+          {
+            "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_spoke_northeu_001_name'), 'snet-vm')]",
+            "name": "snet-vm",
+            "properties": {
+              "addressPrefix": "10.10.0.0/25",
+              "delegations": [],
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_vnet_spoke_northeu_001_snet_vm_nsg_northeurope_name'))]"
+              },
+              "privateEndpointNetworkPolicies": "Disabled",
+              "privateLinkServiceNetworkPolicies": "Enabled",
+              "serviceEndpoints": []
+            },
+            "type": "Microsoft.Network/virtualNetworks/subnets"
+          }
+        ],
+        "virtualNetworkPeerings": [
+          {
+            "id": "[resourceId('Microsoft.Network/virtualNetworks/virtualNetworkPeerings', parameters('virtualNetworks_vnet_spoke_northeu_001_name'), 'hub')]",
+            "name": "hub",
+            "properties": {
+              "allowForwardedTraffic": true,
+              "allowGatewayTransit": false,
+              "allowVirtualNetworkAccess": true,
+              "doNotVerifyRemoteGateways": false,
+              "peeringState": "Connected",
+              "peeringSyncLevel": "FullyInSync",
+              "remoteAddressSpace": {
+                "addressPrefixes": [
+                  "10.5.0.0/24"
+                ]
+              },
+              "remoteVirtualNetwork": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_hub_001_name'))]"
+              },
+              "remoteVirtualNetworkAddressSpace": {
+                "addressPrefixes": [
+                  "10.5.0.0/24"
+                ]
+              },
+              "useRemoteGateways": false
+            },
+            "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings"
+          }
+        ]
+      },
+      "type": "Microsoft.Network/virtualNetworks"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_spoke_westeu_001_name'), 'snet-vm')]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_vnet_spoke_westeu_001_snet_vm_nsg_westeurope_name'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/virtualNetworkPeerings', parameters('virtualNetworks_vnet_spoke_westeu_001_name'), 'hub')]",
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_hub_001_name'))]"
+      ],
+      "location": "westeurope",
+      "name": "[parameters('virtualNetworks_vnet_spoke_westeu_001_name')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "10.20.0.0/24"
+          ]
+        },
+        "dhcpOptions": {
+          "dnsServers": []
+        },
+        "enableDdosProtection": false,
+        "subnets": [
+          {
+            "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_spoke_westeu_001_name'), 'snet-vm')]",
+            "name": "snet-vm",
+            "properties": {
+              "addressPrefix": "10.20.0.0/25",
+              "delegations": [],
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_vnet_spoke_westeu_001_snet_vm_nsg_westeurope_name'))]"
+              },
+              "privateEndpointNetworkPolicies": "Disabled",
+              "privateLinkServiceNetworkPolicies": "Enabled",
+              "serviceEndpoints": []
+            },
+            "type": "Microsoft.Network/virtualNetworks/subnets"
+          }
+        ],
+        "virtualNetworkPeerings": [
+          {
+            "id": "[resourceId('Microsoft.Network/virtualNetworks/virtualNetworkPeerings', parameters('virtualNetworks_vnet_spoke_westeu_001_name'), 'hub')]",
+            "name": "hub",
+            "properties": {
+              "allowForwardedTraffic": true,
+              "allowGatewayTransit": false,
+              "allowVirtualNetworkAccess": true,
+              "doNotVerifyRemoteGateways": false,
+              "peeringState": "Connected",
+              "peeringSyncLevel": "FullyInSync",
+              "remoteAddressSpace": {
+                "addressPrefixes": [
+                  "10.5.0.0/24"
+                ]
+              },
+              "remoteVirtualNetwork": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_hub_001_name'))]"
+              },
+              "remoteVirtualNetworkAddressSpace": {
+                "addressPrefixes": [
+                  "10.5.0.0/24"
+                ]
+              },
+              "useRemoteGateways": false
+            },
+            "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings"
+          }
+        ]
+      },
+      "type": "Microsoft.Network/virtualNetworks"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_vnet_hub_001_AzureBastionSubnet_nsg_westeurope_name'), 'AllowGatewayManager')]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_vnet_hub_001_AzureBastionSubnet_nsg_westeurope_name'), 'AllowHttpsInBound')]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_vnet_hub_001_AzureBastionSubnet_nsg_westeurope_name'), 'AllowSshRdpOutbound')]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_vnet_hub_001_AzureBastionSubnet_nsg_westeurope_name'), 'AllowAzureCloudOutbound')]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_vnet_hub_001_AzureBastionSubnet_nsg_westeurope_name'), 'AllowCorpnet')]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_vnet_hub_001_AzureBastionSubnet_nsg_westeurope_name'), 'AllowSAW')]"
+      ],
+      "location": "westeurope",
+      "name": "[parameters('networkSecurityGroups_vnet_hub_001_AzureBastionSubnet_nsg_westeurope_name')]",
+      "properties": {
+        "securityRules": [
+          {
+            "id": "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_vnet_hub_001_AzureBastionSubnet_nsg_westeurope_name'), 'AllowGatewayManager')]",
+            "name": "AllowGatewayManager",
+            "properties": {
+              "access": "Allow",
+              "description": "Allow GatewayManager",
+              "destinationAddressPrefix": "*",
+              "destinationAddressPrefixes": [],
+              "destinationPortRange": "443",
+              "destinationPortRanges": [],
+              "direction": "Inbound",
+              "priority": 2702,
+              "protocol": "*",
+              "sourceAddressPrefix": "GatewayManager",
+              "sourceAddressPrefixes": [],
+              "sourcePortRange": "*",
+              "sourcePortRanges": []
+            },
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+          },
+          {
+            "id": "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_vnet_hub_001_AzureBastionSubnet_nsg_westeurope_name'), 'AllowHttpsInBound')]",
+            "name": "AllowHttpsInBound",
+            "properties": {
+              "access": "Allow",
+              "description": "Allow HTTPs",
+              "destinationAddressPrefix": "*",
+              "destinationAddressPrefixes": [],
+              "destinationPortRange": "443",
+              "destinationPortRanges": [],
+              "direction": "Inbound",
+              "priority": 2703,
+              "protocol": "*",
+              "sourceAddressPrefix": "Internet",
+              "sourceAddressPrefixes": [],
+              "sourcePortRange": "*",
+              "sourcePortRanges": []
+            },
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+          },
+          {
+            "id": "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_vnet_hub_001_AzureBastionSubnet_nsg_westeurope_name'), 'AllowSshRdpOutbound')]",
+            "name": "AllowSshRdpOutbound",
+            "properties": {
+              "access": "Allow",
+              "destinationAddressPrefix": "VirtualNetwork",
+              "destinationAddressPrefixes": [],
+              "destinationPortRanges": [
+                "22",
+                "3389"
+              ],
+              "direction": "Outbound",
+              "priority": 100,
+              "protocol": "*",
+              "sourceAddressPrefix": "*",
+              "sourceAddressPrefixes": [],
+              "sourcePortRange": "*",
+              "sourcePortRanges": []
+            },
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+          },
+          {
+            "id": "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_vnet_hub_001_AzureBastionSubnet_nsg_westeurope_name'), 'AllowAzureCloudOutbound')]",
+            "name": "AllowAzureCloudOutbound",
+            "properties": {
+              "access": "Allow",
+              "destinationAddressPrefix": "AzureCloud",
+              "destinationAddressPrefixes": [],
+              "destinationPortRange": "443",
+              "destinationPortRanges": [],
+              "direction": "Outbound",
+              "priority": 110,
+              "protocol": "TCP",
+              "sourceAddressPrefix": "*",
+              "sourceAddressPrefixes": [],
+              "sourcePortRange": "*",
+              "sourcePortRanges": []
+            },
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+          },
+          {
+            "id": "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_vnet_hub_001_AzureBastionSubnet_nsg_westeurope_name'), 'AllowCorpnet')]",
+            "name": "AllowCorpnet",
+            "properties": {
+              "access": "Allow",
+              "description": "CSS Governance Security Rule.  Allow Corpnet inbound.  https://aka.ms/casg",
+              "destinationAddressPrefix": "*",
+              "destinationAddressPrefixes": [],
+              "destinationPortRange": "*",
+              "destinationPortRanges": [],
+              "direction": "Inbound",
+              "priority": 2700,
+              "protocol": "*",
+              "sourceAddressPrefix": "CorpNetPublic",
+              "sourceAddressPrefixes": [],
+              "sourcePortRange": "*",
+              "sourcePortRanges": []
+            },
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+          },
+          {
+            "id": "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_vnet_hub_001_AzureBastionSubnet_nsg_westeurope_name'), 'AllowSAW')]",
+            "name": "AllowSAW",
+            "properties": {
+              "access": "Allow",
+              "description": "CSS Governance Security Rule.  Allow SAW inbound.  https://aka.ms/casg",
+              "destinationAddressPrefix": "*",
+              "destinationAddressPrefixes": [],
+              "destinationPortRange": "*",
+              "destinationPortRanges": [],
+              "direction": "Inbound",
+              "priority": 2701,
+              "protocol": "*",
+              "sourceAddressPrefix": "CorpNetSaw",
+              "sourceAddressPrefixes": [],
+              "sourcePortRange": "*",
+              "sourcePortRanges": []
+            },
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+          }
+        ]
+      },
+      "type": "Microsoft.Network/networkSecurityGroups"
+    },
+    {
+      "apiVersion": "2022-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_hub_001_name'), 'snet-hub')]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_vnet_hub_001_snet_hub_nsg_westeurope_name'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_hub_001_name'), 'AzureBastionSubnet')]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_vnet_hub_001_AzureBastionSubnet_nsg_westeurope_name'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/virtualNetworkPeerings', parameters('virtualNetworks_vnet_hub_001_name'), 'spoke-northeu')]",
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_spoke_northeu_001_name'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/virtualNetworkPeerings', parameters('virtualNetworks_vnet_hub_001_name'), 'spoke-westeu')]",
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_spoke_westeu_001_name'))]"
+      ],
+      "location": "westeurope",
+      "name": "[parameters('virtualNetworks_vnet_hub_001_name')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "10.5.0.0/24"
+          ]
+        },
+        "dhcpOptions": {
+          "dnsServers": []
+        },
+        "enableDdosProtection": false,
+        "subnets": [
+          {
+            "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_hub_001_name'), 'snet-hub')]",
+            "name": "snet-hub",
+            "properties": {
+              "addressPrefix": "10.5.0.0/25",
+              "delegations": [],
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_vnet_hub_001_snet_hub_nsg_westeurope_name'))]"
+              },
+              "privateEndpointNetworkPolicies": "Disabled",
+              "privateLinkServiceNetworkPolicies": "Enabled",
+              "serviceEndpoints": [
+                {
+                  "locations": [
+                    "westeurope"
+                  ],
+                  "service": "Microsoft.Sql"
+                }
+              ]
+            },
+            "type": "Microsoft.Network/virtualNetworks/subnets"
+          },
+          {
+            "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_hub_001_name'), 'AzureBastionSubnet')]",
+            "name": "AzureBastionSubnet",
+            "properties": {
+              "addressPrefix": "10.5.0.128/26",
+              "delegations": [],
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_vnet_hub_001_AzureBastionSubnet_nsg_westeurope_name'))]"
+              },
+              "privateEndpointNetworkPolicies": "Disabled",
+              "privateLinkServiceNetworkPolicies": "Enabled",
+              "serviceEndpoints": []
+            },
+            "type": "Microsoft.Network/virtualNetworks/subnets"
+          }
+        ],
+        "virtualNetworkPeerings": [
+          {
+            "id": "[resourceId('Microsoft.Network/virtualNetworks/virtualNetworkPeerings', parameters('virtualNetworks_vnet_hub_001_name'), 'spoke-northeu')]",
+            "name": "spoke-northeu",
+            "properties": {
+              "allowForwardedTraffic": true,
+              "allowGatewayTransit": false,
+              "allowVirtualNetworkAccess": true,
+              "doNotVerifyRemoteGateways": false,
+              "peeringState": "Connected",
+              "peeringSyncLevel": "FullyInSync",
+              "remoteAddressSpace": {
+                "addressPrefixes": [
+                  "10.10.0.0/24"
+                ]
+              },
+              "remoteVirtualNetwork": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_spoke_northeu_001_name'))]"
+              },
+              "remoteVirtualNetworkAddressSpace": {
+                "addressPrefixes": [
+                  "10.10.0.0/24"
+                ]
+              },
+              "useRemoteGateways": false
+            },
+            "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings"
+          },
+          {
+            "id": "[resourceId('Microsoft.Network/virtualNetworks/virtualNetworkPeerings', parameters('virtualNetworks_vnet_hub_001_name'), 'spoke-westeu')]",
+            "name": "spoke-westeu",
+            "properties": {
+              "allowForwardedTraffic": true,
+              "allowGatewayTransit": false,
+              "allowVirtualNetworkAccess": true,
+              "doNotVerifyRemoteGateways": false,
+              "peeringState": "Connected",
+              "peeringSyncLevel": "FullyInSync",
+              "remoteAddressSpace": {
+                "addressPrefixes": [
+                  "10.20.0.0/24"
+                ]
+              },
+              "remoteVirtualNetwork": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_spoke_westeu_001_name'))]"
+              },
+              "remoteVirtualNetworkAddressSpace": {
+                "addressPrefixes": [
+                  "10.20.0.0/24"
+                ]
+              },
+              "useRemoteGateways": false
+            },
+            "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings"
+          }
+        ]
+      },
+      "type": "Microsoft.Network/virtualNetworks"
+    }
+  ],
+  "variables": {}
+}
