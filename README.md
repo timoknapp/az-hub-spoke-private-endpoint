@@ -24,12 +24,10 @@ cat <<EOF > parameters.json
 EOF
 
 # Create resource group
-LOCATION_HUB=westeurope
-LOCATION_SPOKE1=westeurope
-LOCATION_SPOKE2=northeurope
+LOCATION=westeurope
 RG_NAME=rg-hub-spoke
 
-az group create --name $RG_NAME --location $LOCATION_HUB
+az group create --name $RG_NAME --location $LOCATION
 
 # Deploy infrastructure
 az deployment group create \

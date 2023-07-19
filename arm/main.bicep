@@ -10,6 +10,8 @@ param sqlUser string = 'sqluser'
 @secure()
 param sqlPassword string
 
+param vmSize string = 'Standard_DS1_v2'
+
 var nicNameVMSpoke1 = 'nic-vm-spoke-${locationSpoke1}-001'
 var nicNameVMSpoke2 = 'nic-vm-spoke-${locationSpoke2}-001'
 var nsgNameNicVMSpoke1 = 'nsg-nic-spoke-vm-${locationSpoke1}'
@@ -138,7 +140,7 @@ resource vmSpoke1 'Microsoft.Compute/virtualMachines@2023-03-01' = {
       }
     }
     hardwareProfile: {
-      vmSize: 'Standard_B1ls'
+      vmSize: vmSize
     }
     networkProfile: {
       networkInterfaces: [
@@ -456,7 +458,7 @@ resource privateDnsZoneVnetLinkHub 'Microsoft.Network/privateDnsZones/virtualNet
   location: 'global'
   name: 'hub'
   properties: {
-    registrationEnabled: true
+    registrationEnabled: false
     virtualNetwork: {
       id: resourceId('Microsoft.Network/virtualNetworks', vnetNameHub)
     }
