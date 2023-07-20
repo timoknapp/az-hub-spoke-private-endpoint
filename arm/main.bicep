@@ -10,7 +10,7 @@ param sqlUser string = 'sqluser'
 @secure()
 param sqlPassword string
 
-param vmSize string = 'Standard_DS1_v2'
+param vmSize string = 'Standard_B2s'
 
 var nicNameVMSpoke1 = 'nic-vm-spoke-${locationSpoke1}-001'
 var nicNameVMSpoke2 = 'nic-vm-spoke-${locationSpoke2}-001'
@@ -32,6 +32,8 @@ var vnetNameSpoke1 = 'vnet-spoke-${locationSpoke1}-001'
 var vnetNameSpoke2 = 'vnet-spoke-${locationSpoke2}-001'
 var snetNameHubDefault = 'snet-hub'
 var snetNameBastion = 'AzureBastionSubnet'
+
+var mssqlInstallScript = 'https://raw.githubusercontent.com/timoknapp/az-hub-spoke-private-endpoint/master/util/install_mssql.sh'
 
 resource privateDnsZone 'Microsoft.Network/privateDnsZones@2018-09-01' = {
   location: 'global'
@@ -194,6 +196,46 @@ resource vmSpoke1 'Microsoft.Compute/virtualMachines@2023-03-01' = {
   ]
 }
 
+resource vmExtensionSpoke1 'Microsoft.Compute/virtualMachines/extensions@2020-06-01' = {
+  parent: vmSpoke1
+  name: 'install_mssql'
+  location: locationSpoke1
+  properties: {
+    publisher: 'Microsoft.Azure.Extensions'
+    type: 'CustomScript'
+    typeHandlerVersion: '2.1'
+    autoUpgradeMinorVersion: true
+    settings: {
+      fileUris: [
+        mssqlInstallScript
+      ]
+    }
+    protectedSettings: {
+      commandToExecute: 'sh install_mssql.sh'
+    }
+  }
+}
+
+resource vmExtensionSpoke2 'Microsoft.Compute/virtualMachines/extensions@2020-06-01' = {
+  parent: vmSpoke2
+  name: 'install_mssql'
+  location: locationSpoke2
+  properties: {
+    publisher: 'Microsoft.Azure.Extensions'
+    type: 'CustomScript'
+    typeHandlerVersion: '2.1'
+    autoUpgradeMinorVersion: true
+    settings: {
+      fileUris: [
+        mssqlInstallScript
+      ]
+    }
+    protectedSettings: {
+      commandToExecute: 'sh install_mssql.sh'
+    }
+  }
+}
+
 resource nsgNicVMSpoke2 'Microsoft.Network/networkSecurityGroups@2022-11-01' = {
   location: locationSpoke2
   name: nsgNameNicVMSpoke2
@@ -247,22 +289,6 @@ resource nsgNicVMSpok1 'Microsoft.Network/networkSecurityGroups@2022-11-01' = {
     ]
   }
 }
-
-// resource privateDnsZoneARecordSQL 'Microsoft.Network/privateDnsZones/A@2018-09-01' = {
-//   parent: privateDnsZone
-//   name: sqlServerName
-//   properties: {
-//     aRecords: [
-//       {
-//         ipv4Address: privateEndpointSqlHub.properties.networkInterfaces[0].properties.ipConfigurations[0].properties.privateIPAddress
-//       }
-//     ]
-//     metadata: {
-//       creator: 'created by private endpoint pe-sql with resource guid 37e57078-4e55-463b-b6b4-0ec692fd5f3e'
-//     }
-//     ttl: 10
-//   }
-// }
 
 resource privateDnsZoneSOARecord 'Microsoft.Network/privateDnsZones/SOA@2018-09-01' = {
   parent: privateDnsZone
