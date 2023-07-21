@@ -79,7 +79,7 @@ resource vmSpoke2 'Microsoft.Compute/virtualMachines@2023-03-01' = {
       }
     }
     hardwareProfile: {
-      vmSize: 'Standard_B1ls'
+      vmSize: vmSize
     }
     networkProfile: {
       networkInterfaces: [
