@@ -1,7 +1,7 @@
 #!/bin/bash
 sudo dpkg --configure -a
-sudo curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
-sudo curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list > /etc/apt/sources.list.d/mssql-release.list
+sudo curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+sudo sh -c 'curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list > /etc/apt/sources.list.d/mssql-release.list'
 sudo apt-get -y update
 
 # install MSSQL Tools
