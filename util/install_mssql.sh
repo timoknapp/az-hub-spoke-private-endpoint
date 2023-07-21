@@ -9,4 +9,3 @@ sudo ACCEPT_EULA=Y apt-get install -y mssql-tools18 unixodbc-dev
 
 # add MSSQL Tools to PATH
 echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> /home/azureuser/.bashrc
-# source /home/azureuser/.bashrc
