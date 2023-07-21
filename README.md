@@ -1,5 +1,7 @@
 # Azure Hub & Spoke using Private Endpoints
 
+[![Build Bicep](https://github.com/timoknapp/az-hub-spoke-private-endpoint/actions/workflows/bicep.yml/badge.svg?branch=master)](https://github.com/timoknapp/az-hub-spoke-private-endpoint/actions/workflows/bicep.yml)
+
 Proof of concept for a Hub &amp; Spoke topology using private endpoints on Azure
 
 ![alt text](https://learn.microsoft.com/en-us/training/wwl-azure/design-implement-private-access-to-azure-services/media/hub-spoke-azure-dns-0b3715ed.png)
@@ -11,11 +13,11 @@ Proof of concept for a Hub &amp; Spoke topology using private endpoints on Azure
 ## Prerequisites
 
 - Azure Subscription
-- Azure CLI (or Terraform, tbd)
+- [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli) (or Terraform, tbd)
 
 ## Deployment
 
-### Bicep
+### [Bicep](./arm/)
 
 ```bash
 # Change Directoy
@@ -43,7 +45,7 @@ az deployment group create \
   --parameters parameters.json
 ```
 
-### Terraform
+### [Terraform](./terraform/)
 
 tbd
 

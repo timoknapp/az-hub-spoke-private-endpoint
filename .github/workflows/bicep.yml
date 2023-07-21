@@ -1,0 +1,23 @@
+name: Build
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - ".github/**"
+      - "arm/**"
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+jobs:
+  build_and_test:
+    name: Build Bicep
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+      - name: Run Bicep Build action
+        uses: Azure/bicep-build-action@v1.0.1
+        with:
+          bicepFilePath: ./arm/main.bicep

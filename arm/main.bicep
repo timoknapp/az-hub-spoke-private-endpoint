@@ -10,6 +10,7 @@ param sqlUser string = 'sqluser'
 @secure()
 param sqlPassword string
 
+// param vmSize string = 'Standard_DS1_v2'
 param vmSize string = 'Standard_B2s'
 
 var nicNameVMSpoke1 = 'nic-vm-spoke-${locationSpoke1}-001'
@@ -205,13 +206,12 @@ resource vmExtensionSpoke1 'Microsoft.Compute/virtualMachines/extensions@2020-06
     type: 'CustomScript'
     typeHandlerVersion: '2.1'
     autoUpgradeMinorVersion: true
-    settings: {
+    protectedSettings: {
       fileUris: [
         mssqlInstallScript
       ]
-    }
-    protectedSettings: {
       commandToExecute: 'sh install_mssql.sh'
+      // commandToExecute: 'sudo dpkg --configure -a && sudo apt-get -y update && && sudo apt-get -y install mssql-tools18 unixodbc-dev'
     }
   }
 }
@@ -225,13 +225,12 @@ resource vmExtensionSpoke2 'Microsoft.Compute/virtualMachines/extensions@2020-06
     type: 'CustomScript'
     typeHandlerVersion: '2.1'
     autoUpgradeMinorVersion: true
-    settings: {
+    protectedSettings: {
       fileUris: [
         mssqlInstallScript
       ]
-    }
-    protectedSettings: {
       commandToExecute: 'sh install_mssql.sh'
+      // commandToExecute: 'sudo dpkg --configure -a && sudo apt-get -y update && && sudo apt-get -y install mssql-tools18 unixodbc-dev'
     }
   }
 }
