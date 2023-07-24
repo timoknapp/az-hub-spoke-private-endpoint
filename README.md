@@ -58,4 +58,9 @@ tbd
     DB_PASSWORD=INSERT_PASSWORD_HERE
     # Test Connection and print SQL Server Version
     sqlcmd -S tcp:$DB_HOST,1433 -d db -U $DB_USER -P $DB_PASSWORD -Q "SELECT @@VERSION"
+    
+    # Result should be similar to:
+    Microsoft SQL Azure (RTM) - 12.0.2000.8 
+    Jul  8 2023 12:00:47 
+    Copyright (C) 2022 Microsoft Corporation
     ```
