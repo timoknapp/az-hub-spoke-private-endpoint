@@ -54,7 +54,25 @@ az deployment group create \
 
 ### [Terraform](./terraform/)
 
-tbd
+```bash
+# Change Directoy
+cd terraform
+
+# Create parameters.json
+# TODO
+
+# Terraform init (only once)
+terraform init
+
+# Terraform validate (optional)
+terraform validate
+
+# Terraform plan
+terraform plan -out main.tfplan
+
+# Terraform apply
+terraform apply main.tfplan
+```
 
 ## Verify Deployment
 
