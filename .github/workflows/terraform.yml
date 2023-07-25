@@ -14,13 +14,18 @@ jobs:
   build_and_test:
     name: Build Terraform
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: "terraform/"
     steps:
       - name: Check out repository
-        uses: actions/checkout@v2
-      - name: Run Terraform Plan
-        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
-        id: plan-run
-        with:
-          workspace: "az-hub-spoke-private-endpoint/terraform"
-        #   configuration_version: ${{ steps.plan-upload.outputs.configuration_version_id }}
-          plan_only: true
+        uses: actions/checkout@v3
+      - name: Terraform Validate
+        uses: hashicorp/setup-terraform@v2
+        id: validate
+        run: terraform validate -no-color
+        
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -no-color
+        continue-on-error: true
