@@ -2,6 +2,8 @@
 
 [![Build Bicep](https://github.com/timoknapp/az-hub-spoke-private-endpoint/actions/workflows/bicep.yml/badge.svg?branch=master)](https://github.com/timoknapp/az-hub-spoke-private-endpoint/actions/workflows/bicep.yml)
 
+[![Build Terraform](https://github.com/timoknapp/az-hub-spoke-private-endpoint/actions/workflows/terraform.yml/badge.svg?branch=master)](https://github.com/timoknapp/az-hub-spoke-private-endpoint/actions/workflows/terraform.yml)
+
 Proof of concept for a Hub &amp; Spoke topology using private endpoints on Azure
 
 ![alt text](https://learn.microsoft.com/en-us/training/wwl-azure/design-implement-private-access-to-azure-services/media/hub-spoke-azure-dns-0b3715ed.png)
