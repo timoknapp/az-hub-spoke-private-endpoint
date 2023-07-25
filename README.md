@@ -1,8 +1,13 @@
 # Azure Hub & Spoke using Private Endpoints
 
-[![Build Bicep](https://github.com/timoknapp/az-hub-spoke-private-endpoint/actions/workflows/bicep.yml/badge.svg?branch=master)](https://github.com/timoknapp/az-hub-spoke-private-endpoint/actions/workflows/bicep.yml)
-
-[![Build Terraform](https://github.com/timoknapp/az-hub-spoke-private-endpoint/actions/workflows/terraform.yml/badge.svg?branch=master)](https://github.com/timoknapp/az-hub-spoke-private-endpoint/actions/workflows/terraform.yml)
+<p align="left">
+    <a href="https://github.com/timoknapp/az-hub-spoke-private-endpoint/actions/workflows/bicep.yml">
+        <img alt="Build Bicep" src="https://github.com/timoknapp/az-hub-spoke-private-endpoint/actions/workflows/bicep.yml/badge.svg">
+    </a>
+    <a href="https://github.com/timoknapp/az-hub-spoke-private-endpoint/actions/workflows/terraform.yml">
+        <img alt="Build Terraform" src="https://github.com/timoknapp/az-hub-spoke-private-endpoint/actions/workflows/terraform.yml/badge.svg">
+    </a>
+</p>
 
 Proof of concept for a Hub &amp; Spoke topology using private endpoints on Azure
 
