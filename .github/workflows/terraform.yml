@@ -18,10 +18,10 @@ jobs:
       run:
         working-directory: "terraform/"
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+      - uses: hashicorp/setup-terraform@v2
+      
       - name: Terraform Validate
-        uses: hashicorp/setup-terraform@v2
         id: validate
         run: terraform validate -no-color
         
