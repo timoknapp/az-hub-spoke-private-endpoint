@@ -6,7 +6,7 @@ param vnetNameSpoke1 string
 param vnetNameSpoke2 string
 param sqlServerName string
 
-var nsgNameSnetHubBastion = 'nsg-snet-hub-azurebastion-${locationHub}-001'
+var nsgNameSnetHubBastion = 'nsg-snet-hub-bastion-${locationHub}-001'
 var nsgNameSnetHub = 'nsg-snet-hub-${locationHub}-001'
 var nsgNameSnetVMSpoke1 = 'nsg-snet-spoke-vm-${locationSpoke1}-001'
 var nsgNameSnetVMSpoke2 = 'nsg-snet-spoke-vm-${locationSpoke2}-001'

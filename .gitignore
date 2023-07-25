@@ -11,6 +11,9 @@ terraform/.terraform/providers/*
 terraform/*.tfstate
 terraform/*.tfstate.*
 
+# .tfplan files
+terraform/*.tfplan
+
 # Crash log files
 terraform/crash.log
 
