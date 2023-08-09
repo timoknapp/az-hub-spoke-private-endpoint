@@ -266,7 +266,7 @@ resource nicVMSpoke2 'Microsoft.Network/networkInterfaces@2022-11-01' = {
     nicType: 'Standard'
   }
   dependsOn: [
-    // vnetSpoke2)
+    // vnetSpoke2
   ]
 }
 

@@ -58,8 +58,8 @@ az deployment group create \
 # Change Directoy
 cd terraform
 
-# Create parameters.json
-# TODO
+# Set passwords in main.tf
+sed -i '' "s/<PW_PLACEHOLDER>/A$(openssl rand -hex 6)#/g" main.tf
 
 # Terraform init (only once)
 terraform init
