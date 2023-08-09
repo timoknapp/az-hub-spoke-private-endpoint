@@ -18,7 +18,7 @@ variable "hub_location" {
 
 variable "spoke1_location" {
     type = string
-    default     = "westeurope"
+    default     = "germanywestcentral"
     description = "Location of Spoke 1."
 }
 

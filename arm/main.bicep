@@ -1,5 +1,5 @@
 param locationHub string = 'westeurope'
-param locationSpoke1 string = 'westeurope'
+param locationSpoke1 string = 'germanywestcentral'
 param locationSpoke2 string = 'northeurope'
 
 param vmUser string = 'azureuser'
